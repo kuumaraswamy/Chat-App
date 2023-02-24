@@ -55,6 +55,6 @@ server.listen(port, () =>{
 
 // git init 
 // git add . 
-// git commit -m "intial commit " 
+// git commit -m " Rendering messages in ui " 
 // git push -u origin master
 
