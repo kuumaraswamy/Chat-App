@@ -19,9 +19,12 @@ let count = 0;
 io.on('connection', (socket) =>{
     console.log('New Web Socket Connection ')
 
-    
-    socket.emit('message', generateMessage('Welcome!'))
-    socket.broadcast.emit('message', generateMessage('A new user has Joined !'))
+    socket.on('join', ({username,room}) => {
+        socket.join(room)
+
+        socket.emit('message', generateMessage('Welcome!'))
+        socket.broadcast.to(room).emit('message', generateMessage(`${username} has Joined!`))
+    })
 
     socket.on('sendMessage', (message, callback)=>{
 
@@ -31,7 +34,7 @@ io.on('connection', (socket) =>{
             return callback('Profanity is not Allowed')
         }
 
-        io.emit('message',generateMessage(message))
+        io.to('kumar').emit('message',generateMessage(message))
         callback()
     })  
 
