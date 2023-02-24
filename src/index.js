@@ -81,6 +81,6 @@ server.listen(port, () =>{
 
 // git init 
 // git add . 
-// git commit -m " Sending messages to the rooms " 
+// git commit -m " Rendering userlist in the sidebar " 
 // git push -u origin master
 
