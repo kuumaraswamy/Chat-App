@@ -59,6 +59,6 @@ server.listen(port, () =>{
 
 // git init 
 // git add . 
-// git commit -m " Time stamps and styling chat application " 
+// git commit -m " storing users  " 
 // git push -u origin master
 
