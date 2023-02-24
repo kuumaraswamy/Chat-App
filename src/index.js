@@ -31,7 +31,10 @@ io.on('connection', (socket) =>{
 
         socket.emit('message', generateMessage('Admin','Welcome!'))
         socket.broadcast.to(user.room).emit('message', generateMessage('Admin',`${user.username} has Joined!`))
-
+        io.to(user.room).emit('roomData',{
+            room: user.room,
+            users:getUsersInRoom(user.room)
+        })
         callback()
     })
 
@@ -58,6 +61,10 @@ io.on('connection', (socket) =>{
 
         if(user){
             io.to(user.room).emit('message',generateMessage('Admin',`${user.username} has Left!`))
+            io.to(user.room).emit('roomData', {
+                room:user.room,
+                users:getUsersInRoom(user.room)
+            })
         }
         
     })
@@ -74,6 +81,6 @@ server.listen(port, () =>{
 
 // git init 
 // git add . 
-// git commit -m " Tracking user joining and leaving " 
+// git commit -m " Sending messages to the rooms " 
 // git push -u origin master
 
