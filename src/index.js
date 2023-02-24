@@ -3,6 +3,7 @@ const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
+const {generateMessage,generateLocationMessage} = require('../src/utils/messages')
 
 
 const app = express()
@@ -19,8 +20,8 @@ io.on('connection', (socket) =>{
     console.log('New Web Socket Connection ')
 
     
-    socket.emit('message', 'Welcome !')
-    socket.broadcast.emit('message', 'A new user has Joined !')
+    socket.emit('message', generateMessage('Welcome!'))
+    socket.broadcast.emit('message', generateMessage('A new user has Joined !'))
 
     socket.on('sendMessage', (message, callback)=>{
 
@@ -30,17 +31,17 @@ io.on('connection', (socket) =>{
             return callback('Profanity is not Allowed')
         }
 
-        io.emit('message',message)
+        io.emit('message',generateMessage(message))
         callback()
     })  
 
     socket.on('sendLocation', (coords, callback)=>{
-        io.emit('message',`https://www.google.com/maps/?q=${coords.latitude},${coords.longitude}`)
+        io.emit('locationMessage',generateLocationMessage(`https://www.google.com/maps/?q=${coords.latitude},${coords.longitude}`))
         callback()
     })
 
     socket.on('disconnect', () =>{
-        io.emit('message','A user has Left !')
+        io.emit('message',generateMessage('A user has Left !'))
     })
 
     
@@ -55,6 +56,6 @@ server.listen(port, () =>{
 
 // git init 
 // git add . 
-// git commit -m " Rendering messages in ui " 
+// git commit -m " Time stamps and styling chat application " 
 // git push -u origin master
 
