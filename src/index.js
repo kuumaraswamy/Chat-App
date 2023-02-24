@@ -4,6 +4,7 @@ const express = require('express')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
 const {generateMessage,generateLocationMessage} = require('../src/utils/messages')
+const {addUser,removeUser,getUser,getUsersInRoom} = require('../src/utils/users')
 
 
 const app = express()
@@ -19,11 +20,19 @@ let count = 0;
 io.on('connection', (socket) =>{
     console.log('New Web Socket Connection ')
 
-    socket.on('join', ({username,room}) => {
-        socket.join(room)
+    socket.on('join', (options, callback) => {
+        const {error,user} = addUser({id:socket.id, ...options})
+
+        if(error){
+            return callback(error)
+        }
+
+        socket.join(user.room)
 
         socket.emit('message', generateMessage('Welcome!'))
-        socket.broadcast.to(room).emit('message', generateMessage(`${username} has Joined!`))
+        socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has Joined!`))
+
+        callback()
     })
 
     socket.on('sendMessage', (message, callback)=>{
@@ -44,7 +53,12 @@ io.on('connection', (socket) =>{
     })
 
     socket.on('disconnect', () =>{
-        io.emit('message',generateMessage('A user has Left !'))
+        const user = removeUser(socket.id)
+
+        if(user){
+            io.to(user.room).emit('message',generateMessage(`${user.username} has Left!`))
+        }
+        
     })
 
     
@@ -59,6 +73,6 @@ server.listen(port, () =>{
 
 // git init 
 // git add . 
-// git commit -m " storing users  " 
+// git commit -m " Tracking user joining and leaving " 
 // git push -u origin master
 
